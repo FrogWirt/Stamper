@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  stamper_db:
+    container_name: stamper_db
+    image: postgres:latest
+    restart: always
+    ports:
+      - 8989:5432
+    environment:
+      - POSTGRES_DB=stamper_db
+      - POSTGRES_USER=stamper_user
+      - POSTGRES_PASSWORD=stamper_password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  stamper_app:
+    container_name: stamper_container
+    image: WirtTheFrog/stamper
+    build: .
+    ports:
+      - 8990:8990
+    environment:
+      - DATABASE_URL=jdbc:postgresql://stamper_db:5432/stamper_db
+      - DATABASE_USER=stamper_user
+      - DATABASE_PASSWORD=stamper_password
+    depends_on:
+      - stamper_db
+
+volumes:
+  pgdata: {}

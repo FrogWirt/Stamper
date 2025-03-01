@@ -1,2 +1,1 @@
 # Stamper
-test
