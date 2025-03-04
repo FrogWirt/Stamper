@@ -1,7 +1,10 @@
-package pro.WirtTheFrog.Stamper.user;
+package pro.frogletwirt.stamper.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import pro.frogletwirt.stamper.entities.User;
+import pro.frogletwirt.stamper.repositories.UserRepository;
+
 
 import java.util.List;
 
@@ -9,17 +12,21 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
+    private final UserRepository userRepository;
+
     @Autowired
-    private UserRepository userRepository;
+    public UserController(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
 
     @GetMapping
     public List<User> users(){
-        return userRepository.findAll();
+        return (List<User>) userRepository.findAll();
     }
 
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id){
-        return userRepository.findById(id).get();
+        return userRepository.findById(id).orElseThrow();
     }
 
     @PostMapping
@@ -29,7 +36,7 @@ public class UserController {
 
     @PostMapping("/{id}")
     public User updateUser(@PathVariable Long id, @RequestBody User user){
-        User existingUser = userRepository.findById(id).get();
+        User existingUser = userRepository.findById(id).orElseThrow();
         existingUser.setUsername(user.getUsername());
         existingUser.setPassword(user.getPassword());
         return userRepository.save(existingUser);
